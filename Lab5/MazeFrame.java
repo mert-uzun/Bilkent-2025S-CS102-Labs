@@ -4,34 +4,125 @@ import javax.swing.*;
 import java.awt.*;
 
 public class MazeFrame extends JFrame{
-    private JPanel rootPanel;
-    private MazeCell[][] maze;
+    public MazeCell[][] maze;
 
     public MazeFrame(){
         setTitle("Maze");
         setPreferredSize(new Dimension(400, 400));
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLayout(new GridLayout(1,1));
-
-        rootPanel = new JPanel();
-        rootPanel.setPreferredSize(new Dimension(400, 400));
-        rootPanel.setLayout(new GridLayout(5, 5));
+        setLayout(new GridLayout(5,5));
 
         maze = new MazeCell[5][5];
         for(int i = 0; i < 5; i++){
             for(int j = 0; j < 5; j++){
-                maze[i][j] = new MazeCell(i, j, false, false, false);
-                maze[i][j].setPreferredSize(new Dimension(80, 80));
-                maze[i][j].setBackground(Color.WHITE);
-                rootPanel.add(maze[i][j]);
+                maze[i][j] = new MazeCell();
+                add(maze[i][j]);
+                maze[i][j].setVisible(true);
             }
         }
 
         //Set the start and end cells by default
-        maze[0][0].setStart(true);
-        maze[4][4].setEnd(true);
-
-        add(rootPanel);
+        maze[0][0].setCell(true, false, false);
+        maze[4][4].setCell(false, true, false);
+        
+        pack();
+        setVisible(true);
     }
-    
+
+    public void reset(){
+        resetWalls();
+        resetStart();
+        resetEnd();
+    }
+
+    public void resetWalls(){
+        for(int i = 0; i < 5; i++){
+            for(int j = 0; j < 5; j++){
+                maze[i][j].resetWall();
+                maze[i][j].repaint();
+            }
+        }
+    }
+
+    public void resetStart(){
+        for(int i = 0; i < 5; i++){
+            for(int j = 0; j < 5; j++){
+                maze[i][j].resetStart();
+                maze[i][j].repaint();
+            }
+        }
+    }
+
+    public void resetEnd(){
+        for(int i = 0; i < 5; i++){
+            for(int j = 0; j < 5; j++){
+                maze[i][j].resetEnd();
+                maze[i][j].repaint();
+            }
+        }
+    }
+
+    public void enableSetStart(){
+        for(int i = 0; i < 5; i++){
+            for(int j = 0; j < 5; j++){
+                maze[i][j].enableSetStart();
+            }
+        }
+    }
+
+    public void enableSetEnd(){
+        for(int i = 0; i < 5; i++){
+            for(int j = 0; j < 5; j++){
+                maze[i][j].enableSetEnd();
+            }
+        }
+    }
+
+    public void enableAddWall(){
+        for(int i = 0; i < 5; i++){
+            for(int j = 0; j < 5; j++){
+                maze[i][j].enableAddWall();
+            }
+        }
+    }
+
+    public void enableRemoveWall(){
+        for(int i = 0; i < 5; i++){
+            for(int j = 0; j < 5; j++){
+                maze[i][j].enableRemoveWall();
+            }
+        }
+    }
+
+    public void disableRemoveWall(){
+        for(int i = 0; i < 5; i++){
+            for(int j = 0; j < 5; j++){
+                maze[i][j].disableRemoveWall();
+            }
+        }
+    }
+
+    public void disableAddWall(){
+        for(int i = 0; i < 5; i++){
+            for(int j = 0; j < 5; j++){
+                maze[i][j].disableAddWall();
+            }
+        }
+    }
+
+    public void disableSetStart(){
+        for(int i = 0; i < 5; i++){
+            for(int j = 0; j < 5; j++){
+                maze[i][j].disableSetStart();
+            }
+        }
+    }
+
+    public void disableSetEnd(){
+        for(int i = 0; i < 5; i++){
+            for(int j = 0; j < 5; j++){
+                maze[i][j].disableSetEnd();
+            }
+        }
+    }
 }

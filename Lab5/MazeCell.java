@@ -6,8 +6,117 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseEvent;
 
 public class MazeCell extends JPanel {
+    private final int INTERVAL = 80;
+    private final MouseListener SET_START = new MouseListener(){
+        @Override
+        public void mouseClicked(MouseEvent e){
+            for(int i = 0; i < 5; i++){
+                for(int j = 0; j < 5; j++){
+                    if(e.getX() > j * INTERVAL && e.getX() < (j + 1) * INTERVAL && e.getY() > i * INTERVAL && e.getY() < (i + 1) * INTERVAL){
+                        ButtonsFrame.CurrentMaze.resetStart();
+                        setCell(true, false, false);
+                        ButtonsFrame.CurrentMaze.disableSetStart();
+                    }
+                }
+            }
+        }
+
+        @Override
+        public void mousePressed(MouseEvent e){}
+
+        @Override
+        public void mouseReleased(MouseEvent e){}
+
+        @Override
+        public void mouseExited(MouseEvent e){}
+
+        @Override
+        public void mouseEntered(MouseEvent e){}
+    };
+
+    private final MouseListener SET_END = new MouseListener(){
+        @Override
+        public void mouseClicked(MouseEvent e){
+            for(int i = 0; i < 5; i++){
+                for(int j = 0; j < 5; j++){
+                    if(e.getX() > j * INTERVAL && e.getX() < (j + 1) * INTERVAL && e.getY() > i * INTERVAL && e.getY() < (i + 1) * INTERVAL){
+                        ButtonsFrame.CurrentMaze.resetEnd();
+                        setCell(false, true, false);
+                        ButtonsFrame.CurrentMaze.disableSetEnd();
+                    }
+                }
+            }
+        }
+
+        @Override
+        public void mousePressed(MouseEvent e){}
+
+        @Override
+        public void mouseReleased(MouseEvent e){}
+
+        @Override
+        public void mouseExited(MouseEvent e){}
+
+        @Override
+        public void mouseEntered(MouseEvent e){}
+    };
+
+    private final MouseListener ADD_WALL = new MouseListener(){
+        @Override
+        public void mouseClicked(MouseEvent e){
+            for(int i = 0; i < 5; i++){
+                for(int j = 0; j < 5; j++){
+                    if(e.getX() > j * INTERVAL && e.getX() < (j + 1) * INTERVAL && e.getY() > i * INTERVAL && e.getY() < (i + 1) * INTERVAL){
+                        addWall();
+                        ButtonsFrame.CurrentMaze.disableAddWall();
+                    }
+                }
+            }
+        }
+
+        @Override
+        public void mousePressed(MouseEvent e){}
+
+        @Override
+        public void mouseReleased(MouseEvent e){}
+
+        @Override
+        public void mouseExited(MouseEvent e){}
+
+        @Override
+        public void mouseEntered(MouseEvent e){}
+    };
+
+    private final MouseListener REMOVE_WALL = new MouseListener(){
+        @Override
+        public void mouseClicked(MouseEvent e){
+            for(int i = 0; i < 5; i++){
+                for(int j = 0; j < 5; j++){
+                    if(e.getX() > j * INTERVAL && e.getX() < (j + 1) * INTERVAL && e.getY() > i * INTERVAL && e.getY() < (i + 1) * INTERVAL){
+                        setCell(false, false, false);
+                        ButtonsFrame.CurrentMaze.disableRemoveWall();
+                    }
+                }
+            }
+        }
+
+        @Override
+        public void mousePressed(MouseEvent e){}
+
+        @Override
+        public void mouseReleased(MouseEvent e){}
+
+        @Override
+        public void mouseExited(MouseEvent e){}
+
+        @Override
+        public void mouseEntered(MouseEvent e){}
+    };
+
     private int x;
     private int y;
     private boolean isWall;
@@ -16,33 +125,72 @@ public class MazeCell extends JPanel {
     private BufferedImage mouse;
     private BufferedImage cheese;
     private BufferedImage wall;
-    
-    public MazeCell(int x, int y, boolean isWall, boolean isStart, boolean isEnd){
-        this.x = x;
-        this.y = y;
-        this.isWall = isWall;
-        this.isStart = isStart;
-        this.isEnd = isEnd;
 
+    public MazeCell(){
         try{
-            mouse = ImageIO.read(new File("mouse.png"));
-            cheese = ImageIO.read(new File("cheese.png"));
-            wall = ImageIO.read(new File("wall.png"));
+            mouse = ImageIO.read(new File("C:\\Users\\Mert\\Desktop\\2025S\\CS102\\Bilkent-2025S-CS102-Labs\\Lab5\\mouse.png"));
+            cheese = ImageIO.read(new File("C:\\Users\\Mert\\Desktop\\2025S\\CS102\\Bilkent-2025S-CS102-Labs\\Lab5\\cheese.png"));
+            wall = ImageIO.read(new File("C:\\Users\\Mert\\Desktop\\2025S\\CS102\\Bilkent-2025S-CS102-Labs\\Lab5\\wall.png"));
         }catch(IOException e){
             System.out.println(e);
         }
+
+        isWall = false;
+        isStart = false;
+        isEnd = false;
+
+        setPreferredSize(new Dimension(80, 80));
+        setOpaque(true);
+        setBackground(Color.WHITE);
+        setBorder(BorderFactory.createLineBorder(Color.BLACK));
+    }
+
+    public void enableSetStart(){
+        addMouseListener(SET_START);
+    }
+
+    public void enableSetEnd(){
+        addMouseListener(SET_END);
+    }
+
+    public void enableAddWall(){
+        addMouseListener(ADD_WALL);
+    }
+
+    public void enableRemoveWall(){
+        addMouseListener(REMOVE_WALL);
+    }
+
+    public void disableSetStart(){
+        removeMouseListener(SET_START);
+    }
+
+    public void disableSetEnd(){
+        removeMouseListener(SET_END);
+    }
+
+    public void disableAddWall(){
+        removeMouseListener(ADD_WALL);
+    }
+
+    public void disableRemoveWall(){
+        removeMouseListener(REMOVE_WALL);
     }
 
     @Override public void paintComponent(Graphics g){
         super.paintComponent(g);
-        if(isWall){
-            g.drawImage(wall, 0, 0, null); 
-        }
-        else if(isStart){
-            g.drawImage(mouse, 0, 0, null);
+        if(isStart){
+            g.drawImage(mouse, 0, 0, 80, 80, null);
         }
         else if(isEnd){
-            g.drawImage(cheese, 0, 0, null);
+            g.drawImage(cheese, 0, 0, 80, 80, null);
+        }
+        else if(isWall){
+            g.drawImage(wall, 0, 0, 80, 80, null);
+        }
+        else{
+            g.setColor(Color.WHITE);
+            g.fillRect(0, 0, getWidth(), getHeight());
         }
     }
 
@@ -59,19 +207,34 @@ public class MazeCell extends JPanel {
     }
 
     //Setters
-    public void setWall(boolean isWall){
+    public void addWall(){
+        if(!isWall){
+            this.isWall = true;
+            this.isStart = false;
+            this.isEnd = false;
+            repaint();
+        }
+    }
+
+    public void setCell(boolean isStart, boolean isEnd, boolean isWall){
+        this.isStart = isStart;
+        this.isEnd = isEnd;
         this.isWall = isWall;
         repaint();
     }
 
-    public void setStart(boolean isStart){
-        this.isStart = isStart;
+    public void resetStart(){
+        isStart = false;
         repaint();
     }
 
-    public void setEnd(boolean isEnd){
-        this.isEnd = isEnd;
+    public void resetEnd(){
+        isEnd = false;
         repaint();
     }
-    
+
+    public void resetWall(){
+        isWall = false;
+        repaint();
+    }
 }
