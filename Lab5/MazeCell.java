@@ -127,9 +127,9 @@ public class MazeCell extends JPanel {
 
     public MazeCell(){
         try{
-            mouse = ImageIO.read(new File("C:\\Users\\Mert\\Desktop\\2025S\\CS102\\Bilkent-2025S-CS102-Labs\\Lab5\\mouse.png"));
-            cheese = ImageIO.read(new File("C:\\Users\\Mert\\Desktop\\2025S\\CS102\\Bilkent-2025S-CS102-Labs\\Lab5\\cheese.png"));
-            wall = ImageIO.read(new File("C:\\Users\\Mert\\Desktop\\2025S\\CS102\\Bilkent-2025S-CS102-Labs\\Lab5\\wall.png"));
+            mouse = ImageIO.read(new File("C:\\Users\\Mert\\Desktop\\2025S\\CS102\\Bilkent-2025S-CS102-Labs\\Lab5\\images\\mouse.png"));
+            cheese = ImageIO.read(new File("C:\\Users\\Mert\\Desktop\\2025S\\CS102\\Bilkent-2025S-CS102-Labs\\Lab5\\images\\cheese.png"));
+            wall = ImageIO.read(new File("C:\\Users\\Mert\\Desktop\\2025S\\CS102\\Bilkent-2025S-CS102-Labs\\Lab5\\images\\wall.png"));
         }catch(IOException e){
             System.out.println(e);
         }
