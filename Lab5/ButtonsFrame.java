@@ -71,6 +71,12 @@ public class ButtonsFrame extends JFrame{
         });
 
         FindPath = new JButton("Find Path");
+        FindPath.addActionListener(new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent e){
+                CurrentMaze.findShortestPath();
+            }
+        });
 
         Reset = new JButton("Reset");
         Reset.addActionListener(new ActionListener(){
@@ -81,7 +87,6 @@ public class ButtonsFrame extends JFrame{
                 CurrentMaze.disableSetStart();
                 CurrentMaze.disableSetEnd();
                 CurrentMaze.reset();  
-                CurrentMaze.resetToInitial();
             } 
         });
 

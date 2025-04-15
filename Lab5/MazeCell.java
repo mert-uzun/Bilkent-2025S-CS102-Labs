@@ -19,6 +19,7 @@ public class MazeCell extends JPanel {
                 for(int j = 0; j < 5; j++){
                     if(e.getX() > j * INTERVAL && e.getX() < (j + 1) * INTERVAL && e.getY() > i * INTERVAL && e.getY() < (i + 1) * INTERVAL){
                         ButtonsFrame.CurrentMaze.resetStart();
+                        ButtonsFrame.CurrentMaze.resetToNewPath();
                         setCell(true, false, false);
                         ButtonsFrame.CurrentMaze.disableSetStart();
                     }
@@ -46,6 +47,7 @@ public class MazeCell extends JPanel {
                 for(int j = 0; j < 5; j++){
                     if(e.getX() > j * INTERVAL && e.getX() < (j + 1) * INTERVAL && e.getY() > i * INTERVAL && e.getY() < (i + 1) * INTERVAL){
                         ButtonsFrame.CurrentMaze.resetEnd();
+                        ButtonsFrame.CurrentMaze.resetToNewPath();
                         setCell(false, true, false);
                         ButtonsFrame.CurrentMaze.disableSetEnd();
                     }
@@ -72,6 +74,7 @@ public class MazeCell extends JPanel {
             for(int i = 0; i < 5; i++){
                 for(int j = 0; j < 5; j++){
                     if(e.getX() > j * INTERVAL && e.getX() < (j + 1) * INTERVAL && e.getY() > i * INTERVAL && e.getY() < (i + 1) * INTERVAL){
+                        ButtonsFrame.CurrentMaze.resetToNewPath();
                         addWall();
                         ButtonsFrame.CurrentMaze.disableAddWall();
                     }
@@ -98,6 +101,7 @@ public class MazeCell extends JPanel {
             for(int i = 0; i < 5; i++){
                 for(int j = 0; j < 5; j++){
                     if(e.getX() > j * INTERVAL && e.getX() < (j + 1) * INTERVAL && e.getY() > i * INTERVAL && e.getY() < (i + 1) * INTERVAL){
+                        ButtonsFrame.CurrentMaze.resetToNewPath();
                         setCell(false, false, false);
                         ButtonsFrame.CurrentMaze.disableRemoveWall();
                     }
@@ -118,14 +122,21 @@ public class MazeCell extends JPanel {
         public void mouseEntered(MouseEvent e){}
     };
 
+    private int xCoord;
+    private int yCoord;
+    private int shortestPathLength;
+    private int[] visitedFrom;
     private boolean isWall;
     private boolean isStart;
     private boolean isEnd;
+    private boolean isPartOfShortestPath;
     private BufferedImage mouse;        
     private BufferedImage cheese;
     private BufferedImage wall;
 
-    public MazeCell(){
+    public MazeCell(int xCoord, int yCoord){
+        this.xCoord = xCoord;
+        this.yCoord = yCoord;
         try{
             mouse = ImageIO.read(new File("C:\\Users\\Mert\\Desktop\\2025S\\CS102\\Bilkent-2025S-CS102-Labs\\Lab5\\images\\mouse.png"));
             cheese = ImageIO.read(new File("C:\\Users\\Mert\\Desktop\\2025S\\CS102\\Bilkent-2025S-CS102-Labs\\Lab5\\images\\cheese.png"));
@@ -133,6 +144,9 @@ public class MazeCell extends JPanel {
         }catch(IOException e){
             System.out.println(e);
         }
+
+        visitedFrom = new int[2];
+        shortestPathLength = Integer.MAX_VALUE;
 
         setCell(false, false, false);
 
@@ -190,8 +204,14 @@ public class MazeCell extends JPanel {
             g.setColor(Color.WHITE);
             g.fillRect(0, 0, getWidth(), getHeight());
         }
+
+        if(isPartOfShortestPath){
+            g.setColor(Color.GREEN);
+            g.fillRect(0, 0, getWidth(), getHeight());
+        }
     }
 
+    //Getters
     public boolean isStart(){
         return isStart;
     }
@@ -202,6 +222,18 @@ public class MazeCell extends JPanel {
 
     public boolean isWall(){
         return isWall;
+    }
+
+    public int[] getVisitedFrom(){
+        return visitedFrom;
+    }
+
+    public int getXCoord(){
+        return xCoord;
+    }
+
+    public int getYCoord(){
+        return yCoord;
     }
 
     //Setters
@@ -233,6 +265,27 @@ public class MazeCell extends JPanel {
 
     public void resetWall(){
         isWall = false;
+        repaint();
+    }
+
+    public int getShortestPathLength(){
+        return shortestPathLength;
+    }
+
+    public void setShortestPathLengthAndVisitedFrom(int shortestPathLength, int prevCellX, int prevCellY){
+        if(shortestPathLength < this.shortestPathLength){
+            this.shortestPathLength = shortestPathLength;
+            setVisitedFrom(prevCellX, prevCellY);
+        }
+    }
+
+    public void setVisitedFrom(int x, int y){
+        this.visitedFrom[0] = x;
+        this.visitedFrom[1] = y;
+    }
+
+    public void setIsPartOfShortestPath(boolean isPartOfShortestPath){
+        this.isPartOfShortestPath = isPartOfShortestPath;
         repaint();
     }
 }

@@ -4,7 +4,16 @@ import javax.swing.*;
 import java.awt.*;
 
 public class MazeFrame extends JFrame{
+    private final int MAX_TRIES = 100;
     public MazeCell[][] maze;
+    private int[] startCellCoords = {0, 0};
+    private int[] endCellCoords = {4, 4};
+    private int currentCellX;
+    private int currentCellY;
+    private int currentLengthOfPath = 0;
+    private int shortestPathNumberOfTries = 0;
+    private boolean isShortestPathFound = false;
+    private int lengthOfShortestPathPossible = endCellCoords[0] - startCellCoords[0] + endCellCoords[1] - startCellCoords[1];
 
     public MazeFrame(){
         setTitle("Maze");
@@ -15,7 +24,7 @@ public class MazeFrame extends JFrame{
         maze = new MazeCell[5][5];
         for(int i = 0; i < 5; i++){
             for(int j = 0; j < 5; j++){
-                maze[i][j] = new MazeCell();
+                maze[i][j] = new MazeCell(j, i);
                 add(maze[i][j]);
             }
         }
@@ -27,10 +36,215 @@ public class MazeFrame extends JFrame{
         setVisible(true);
     }
 
+    private boolean isValidCell(int currentCellX, int currentCellY, int prevCellX, int prevCellY, int currentLengthOfPath){
+        if(currentCellX < 0 || currentCellX >= 5 || currentCellY < 0 || currentCellY >= 5){
+            return false;
+        }
+        else if(maze[currentCellX][currentCellY].isWall()){
+            return false;
+        }
+        else if(maze[currentCellX][currentCellY].getVisitedFrom()[0] == prevCellX && maze[currentCellX][currentCellY].getVisitedFrom()[1] == prevCellY){
+            return false;
+        }
+        else {
+            if(maze[currentCellX][currentCellY].getShortestPathLength() <= currentLengthOfPath){
+                return false;
+            }
+            else {
+                maze[currentCellX][currentCellY].setShortestPathLengthAndVisitedFrom(currentLengthOfPath, prevCellX, prevCellY);
+                return true;
+            }
+        }
+    }    
+
+    public void findShortestPath(){
+        resetToNewPath();
+        int xDiff = endCellCoords[0] - startCellCoords[0];
+        int yDiff = endCellCoords[1] - startCellCoords[1];
+
+        if(xDiff >= 0 && yDiff >= 0){
+            traverseDownRight();
+            return;
+        }
+        else if(xDiff >= 0 && yDiff <= 0){
+            traverseUpRight();
+            return;
+        }
+        else if(xDiff < 0 && yDiff >= 0){
+            traverseDownLeft();
+            return;
+        }
+        else {
+            traverseUpLeft();
+            return;
+        }
+    }
+
+    private void traverseUpLeft(){
+        if(isShortestPathFound ||shortestPathNumberOfTries >= MAX_TRIES){
+            paintTheShortestPath();
+            return;
+        }
+
+        this.currentLengthOfPath++;
+        if (isValidCell(currentCellX, currentCellY - 1, currentCellX, currentCellY, currentLengthOfPath)) {
+            this.currentCellY--;
+        }
+        else if (isValidCell(currentCellX - 1, currentCellY, currentCellX, currentCellY, currentLengthOfPath)) {
+            this.currentCellX--;
+        }
+        else if (isValidCell(currentCellX, currentCellY + 1, currentCellX, currentCellY, currentLengthOfPath)) {
+            this.currentCellY++;
+        }
+        else if (isValidCell(currentCellX + 1, currentCellY, currentCellX, currentCellY, currentLengthOfPath)) {
+            this.currentCellX++;
+        }
+        else {
+            resetToStartTile();
+            traverseUpRight();
+        }
+
+        if (currentCellX == endCellCoords[0] && currentCellY == endCellCoords[1]) {
+            if(maze[currentCellX][currentCellY].getShortestPathLength() == lengthOfShortestPathPossible){
+                isShortestPathFound = true;
+            }
+
+            resetToStartTile();
+            traverseUpRight();
+        }
+        else {
+            traverseUpLeft();
+        }
+    }
+
+    private void traverseUpRight(){
+        if(isShortestPathFound || shortestPathNumberOfTries >= MAX_TRIES){
+            paintTheShortestPath();
+            return;
+        }
+
+        this.currentLengthOfPath++;
+        if (isValidCell(currentCellX, currentCellY - 1, currentCellX, currentCellY, currentLengthOfPath)) {
+            this.currentCellY--;
+        }
+        else if (isValidCell(currentCellX + 1, currentCellY, currentCellX, currentCellY, currentLengthOfPath)) {
+            this.currentCellX++;
+        }
+        else if (isValidCell(currentCellX, currentCellY + 1, currentCellX, currentCellY, currentLengthOfPath)) {
+            this.currentCellY++;
+        }
+        else if (isValidCell(currentCellX - 1, currentCellY, currentCellX, currentCellY, currentLengthOfPath)) {
+            this.currentCellX--;
+        }
+        else {
+            resetToStartTile();
+            traverseDownRight();
+            return;
+        }
+
+        if (currentCellX == endCellCoords[0] && currentCellY == endCellCoords[1]) {
+            if(maze[currentCellX][currentCellY].getShortestPathLength() == lengthOfShortestPathPossible){
+                isShortestPathFound = true;
+            }
+
+            resetToStartTile();
+            traverseDownRight();
+        }
+        else {
+            traverseUpRight();
+        }
+    }
+
+    private void traverseDownRight(){
+        if(isShortestPathFound || shortestPathNumberOfTries >= MAX_TRIES){
+            paintTheShortestPath();
+            return;
+        }
+
+        this.currentLengthOfPath++;
+        if (isValidCell(currentCellX, currentCellY + 1, currentCellX, currentCellY, currentLengthOfPath)) {
+            this.currentCellY++;
+        }
+        else if (isValidCell(currentCellX + 1, currentCellY, currentCellX, currentCellY, currentLengthOfPath)) {
+            this.currentCellX++;
+        }   
+        else if (isValidCell(currentCellX, currentCellY - 1, currentCellX, currentCellY, currentLengthOfPath)) {    
+            this.currentCellY--;
+        }
+        else if (isValidCell(currentCellX - 1, currentCellY, currentCellX, currentCellY, currentLengthOfPath)) {
+            this.currentCellX--;
+        }   
+        else {
+            resetToStartTile();
+            traverseDownLeft();
+        }
+
+        if (currentCellX == endCellCoords[0] && currentCellY == endCellCoords[1]) {
+            if(maze[currentCellX][currentCellY].getShortestPathLength() == lengthOfShortestPathPossible){
+                isShortestPathFound = true;
+            }
+
+            resetToStartTile();
+            traverseDownLeft();
+        }
+        else {
+            traverseDownRight();
+        }
+    }
+
+    private void traverseDownLeft(){
+        if(isShortestPathFound || shortestPathNumberOfTries >= MAX_TRIES){
+            paintTheShortestPath();
+            return;
+        }
+
+        this.currentLengthOfPath++;
+        if (isValidCell(currentCellX, currentCellY + 1, currentCellX, currentCellY, currentLengthOfPath)) {
+            this.currentCellY++;
+        }
+        else if (isValidCell(currentCellX - 1, currentCellY, currentCellX, currentCellY, currentLengthOfPath)) {
+            this.currentCellX--;
+        }
+        else if (isValidCell(currentCellX, currentCellY - 1, currentCellX, currentCellY, currentLengthOfPath)) {
+            this.currentCellY--;
+        }
+        else if (isValidCell(currentCellX + 1, currentCellY, currentCellX, currentCellY, currentLengthOfPath)) {
+            this.currentCellX++;
+        }
+        else {
+            resetToStartTile();
+            traverseUpLeft();
+        }
+
+        if (currentCellX == endCellCoords[0] && currentCellY == endCellCoords[1]) {
+            if(maze[currentCellX][currentCellY].getShortestPathLength() == lengthOfShortestPathPossible){
+                isShortestPathFound = true;
+            }
+
+            resetToStartTile();
+            traverseUpLeft();
+        }
+        else {
+            traverseDownLeft();
+        }
+    }
+
     public void reset(){
         resetWalls();
         resetStart();
         resetEnd();
+        resetShortestPaths();
+        resetToNewPath();
+        resetToInitial();
+    }
+
+    public void resetToNewPath(){
+        for(int i = 0; i < 5; i++){
+            for(int j = 0; j < 5; j++){
+                maze[i][j].setShortestPathLengthAndVisitedFrom(Integer.MAX_VALUE, -1, -1);
+                maze[i][j].repaint();
+            }
+        }
     }
 
     public void resetWalls(){
@@ -55,6 +269,15 @@ public class MazeFrame extends JFrame{
         for(int i = 0; i < 5; i++){
             for(int j = 0; j < 5; j++){
                 maze[i][j].resetEnd();
+                maze[i][j].repaint();
+            }
+        }
+    }
+
+    public void resetShortestPaths(){
+        for(int i = 0; i < 5; i++){
+            for(int j = 0; j < 5; j++){
+                maze[i][j].setIsPartOfShortestPath(false);
                 maze[i][j].repaint();
             }
         }
@@ -127,5 +350,36 @@ public class MazeFrame extends JFrame{
     public void resetToInitial(){
         maze[0][0].setCell(true, false, false);
         maze[4][4].setCell(false, true, false);
+        startCellCoords[0] = 0;
+        startCellCoords[1] = 0;
+        endCellCoords[0] = 4;
+        endCellCoords[1] = 4;
+        isShortestPathFound = false;
+        shortestPathNumberOfTries = 0;
+    }
+
+    public void resetToStartTile(){
+        currentCellX = startCellCoords[0];
+        currentCellY = startCellCoords[1];
+        currentLengthOfPath = 0;
+        shortestPathNumberOfTries++;
+    }
+
+    private void paintTheShortestPath(){
+        int[] visitedFromCoords = maze[endCellCoords[0]][endCellCoords[1]].getVisitedFrom();
+        int lastPaintedCellX = visitedFromCoords[0];
+        int lastPaintedCellY = visitedFromCoords[1];
+
+        if (maze[endCellCoords[0]][endCellCoords[1]].getShortestPathLength() == 0) {
+            JOptionPane.showMessageDialog(null, "No path found");
+        }
+        else {
+            while (lastPaintedCellX != startCellCoords[0] || lastPaintedCellY != startCellCoords[1]) {
+                maze[lastPaintedCellX][lastPaintedCellY].setIsPartOfShortestPath(true);
+                visitedFromCoords = maze[lastPaintedCellX][lastPaintedCellY].getVisitedFrom();
+                lastPaintedCellX = visitedFromCoords[0];
+                lastPaintedCellY= visitedFromCoords[1];
+            }
+        }
     }
 }
