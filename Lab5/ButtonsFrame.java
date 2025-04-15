@@ -31,6 +31,9 @@ public class ButtonsFrame extends JFrame{
             @Override
             public void actionPerformed(ActionEvent e){
                 CurrentMaze.enableSetStart();
+                CurrentMaze.disableRemoveWall();
+                CurrentMaze.disableAddWall();
+                CurrentMaze.disableSetEnd();
             }
         });
        
@@ -39,6 +42,9 @@ public class ButtonsFrame extends JFrame{
             @Override
             public void actionPerformed(ActionEvent e){
                 CurrentMaze.enableSetEnd();
+                CurrentMaze.disableRemoveWall();
+                CurrentMaze.disableAddWall();
+                CurrentMaze.disableSetStart();
             }
         });
 
@@ -47,6 +53,9 @@ public class ButtonsFrame extends JFrame{
             @Override
             public void actionPerformed(ActionEvent e){
                 CurrentMaze.enableAddWall();
+                CurrentMaze.disableRemoveWall();
+                CurrentMaze.disableSetStart();
+                CurrentMaze.disableSetEnd();
             }
         });
 
@@ -55,6 +64,9 @@ public class ButtonsFrame extends JFrame{
             @Override
             public void actionPerformed(ActionEvent e){
                 CurrentMaze.enableRemoveWall();
+                CurrentMaze.disableSetStart();
+                CurrentMaze.disableSetEnd();
+                CurrentMaze.disableAddWall();
             }
         });
 
@@ -64,7 +76,12 @@ public class ButtonsFrame extends JFrame{
         Reset.addActionListener(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent e){
-                CurrentMaze.reset();               
+                CurrentMaze.disableRemoveWall();
+                CurrentMaze.disableAddWall();
+                CurrentMaze.disableSetStart();
+                CurrentMaze.disableSetEnd();
+                CurrentMaze.reset();  
+                CurrentMaze.resetToInitial();
             } 
         });
 
@@ -77,6 +94,5 @@ public class ButtonsFrame extends JFrame{
 
         add(rootPanel);
         pack();
-        setVisible(true);
     }
 }

@@ -11,6 +11,7 @@ import java.awt.event.MouseEvent;
 
 public class MazeCell extends JPanel {
     private final int INTERVAL = 80;
+
     private final MouseListener SET_START = new MouseListener(){
         @Override
         public void mouseClicked(MouseEvent e){
@@ -117,12 +118,10 @@ public class MazeCell extends JPanel {
         public void mouseEntered(MouseEvent e){}
     };
 
-    private int x;
-    private int y;
     private boolean isWall;
     private boolean isStart;
     private boolean isEnd;
-    private BufferedImage mouse;
+    private BufferedImage mouse;        
     private BufferedImage cheese;
     private BufferedImage wall;
 
@@ -135,14 +134,13 @@ public class MazeCell extends JPanel {
             System.out.println(e);
         }
 
-        isWall = false;
-        isStart = false;
-        isEnd = false;
+        setCell(false, false, false);
 
         setPreferredSize(new Dimension(80, 80));
-        setOpaque(true);
         setBackground(Color.WHITE);
         setBorder(BorderFactory.createLineBorder(Color.BLACK));
+        setOpaque(true);
+        setVisible(true);
     }
 
     public void enableSetStart(){
@@ -194,12 +192,12 @@ public class MazeCell extends JPanel {
         }
     }
 
-    public int getX(){
-        return x;
+    public boolean isStart(){
+        return isStart;
     }
 
-    public int getY(){
-        return y;
+    public boolean isEnd(){
+        return isEnd;
     }
 
     public boolean isWall(){

@@ -17,13 +17,11 @@ public class MazeFrame extends JFrame{
             for(int j = 0; j < 5; j++){
                 maze[i][j] = new MazeCell();
                 add(maze[i][j]);
-                maze[i][j].setVisible(true);
             }
         }
 
         //Set the start and end cells by default
-        maze[0][0].setCell(true, false, false);
-        maze[4][4].setCell(false, true, false);
+        resetToInitial();
         
         pack();
         setVisible(true);
@@ -124,5 +122,10 @@ public class MazeFrame extends JFrame{
                 maze[i][j].disableSetEnd();
             }
         }
+    }
+
+    public void resetToInitial(){
+        maze[0][0].setCell(true, false, false);
+        maze[4][4].setCell(false, true, false);
     }
 }
