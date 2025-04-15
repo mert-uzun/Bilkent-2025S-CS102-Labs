@@ -43,7 +43,7 @@ public class MazeFrame extends JFrame{
         else if(maze[currentCellX][currentCellY].isWall()){
             return false;
         }
-        else if(maze[currentCellX][currentCellY].getVisitedFrom()[0] == prevCellX && maze[currentCellX][currentCellY].getVisitedFrom()[1] == prevCellY){
+        else if(maze[currentCellX][currentCellY].getShortestPathLength() != Integer.MAX_VALUE){
             return false;
         }
         else {
@@ -102,6 +102,7 @@ public class MazeFrame extends JFrame{
         else {
             resetToStartTile();
             traverseUpRight();
+            return;
         }
 
         if (currentCellX == endCellCoords[0] && currentCellY == endCellCoords[1]) {
@@ -111,6 +112,7 @@ public class MazeFrame extends JFrame{
 
             resetToStartTile();
             traverseUpRight();
+            return;
         }
         else {
             traverseUpLeft();
@@ -149,6 +151,7 @@ public class MazeFrame extends JFrame{
 
             resetToStartTile();
             traverseDownRight();
+            return;
         }
         else {
             traverseUpRight();
@@ -177,6 +180,7 @@ public class MazeFrame extends JFrame{
         else {
             resetToStartTile();
             traverseDownLeft();
+            return;
         }
 
         if (currentCellX == endCellCoords[0] && currentCellY == endCellCoords[1]) {
@@ -186,6 +190,7 @@ public class MazeFrame extends JFrame{
 
             resetToStartTile();
             traverseDownLeft();
+            return;
         }
         else {
             traverseDownRight();
@@ -214,6 +219,7 @@ public class MazeFrame extends JFrame{
         else {
             resetToStartTile();
             traverseUpLeft();
+            return;
         }
 
         if (currentCellX == endCellCoords[0] && currentCellY == endCellCoords[1]) {
@@ -223,6 +229,7 @@ public class MazeFrame extends JFrame{
 
             resetToStartTile();
             traverseUpLeft();
+            return;
         }
         else {
             traverseDownLeft();
@@ -363,6 +370,7 @@ public class MazeFrame extends JFrame{
         currentCellY = startCellCoords[1];
         currentLengthOfPath = 0;
         shortestPathNumberOfTries++;
+        System.err.println(shortestPathNumberOfTries);
     }
 
     private void paintTheShortestPath(){
