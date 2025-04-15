@@ -21,6 +21,9 @@ public class MazeCell extends JPanel {
                         ButtonsFrame.CurrentMaze.resetStart();
                         ButtonsFrame.CurrentMaze.resetToNewPath();
                         setCell(true, false, false);
+                        ButtonsFrame.CurrentMaze.startCellCoords[0] = j;
+                        ButtonsFrame.CurrentMaze.startCellCoords[1] = i;
+                        ButtonsFrame.CurrentMaze.lengthOfShortestPathPossible = Math.abs(ButtonsFrame.CurrentMaze.endCellCoords[0] - ButtonsFrame.CurrentMaze.startCellCoords[0]) + Math.abs(ButtonsFrame.CurrentMaze.endCellCoords[1] - ButtonsFrame.CurrentMaze.startCellCoords[1]);
                         ButtonsFrame.CurrentMaze.disableSetStart();
                     }
                 }
@@ -49,6 +52,9 @@ public class MazeCell extends JPanel {
                         ButtonsFrame.CurrentMaze.resetEnd();
                         ButtonsFrame.CurrentMaze.resetToNewPath();
                         setCell(false, true, false);
+                        ButtonsFrame.CurrentMaze.endCellCoords[0] = j;
+                        ButtonsFrame.CurrentMaze.endCellCoords[1] = i;
+                        ButtonsFrame.CurrentMaze.lengthOfShortestPathPossible = Math.abs(ButtonsFrame.CurrentMaze.endCellCoords[0] - ButtonsFrame.CurrentMaze.startCellCoords[0]) + Math.abs(ButtonsFrame.CurrentMaze.endCellCoords[1] - ButtonsFrame.CurrentMaze.startCellCoords[1]);
                         ButtonsFrame.CurrentMaze.disableSetEnd();
                     }
                 }
@@ -146,6 +152,9 @@ public class MazeCell extends JPanel {
         }
 
         visitedFrom = new int[2];
+        visitedFrom[0] = -1;
+        visitedFrom[1] = -1;
+        isPartOfShortestPath = false;
         shortestPathLength = Integer.MAX_VALUE;
 
         setCell(false, false, false);
@@ -191,6 +200,16 @@ public class MazeCell extends JPanel {
 
     @Override public void paintComponent(Graphics g){
         super.paintComponent(g);
+
+        if(isPartOfShortestPath){
+            g.setColor(Color.GREEN);
+            g.fillRect(0, 0, getWidth(), getHeight());
+        }
+        else {
+            g.setColor(Color.WHITE);
+            g.fillRect(0, 0, getWidth(), getHeight());
+        }
+        
         if(isStart){
             g.drawImage(mouse, 0, 0, 80, 80, null);
         }
@@ -199,15 +218,6 @@ public class MazeCell extends JPanel {
         }
         else if(isWall){
             g.drawImage(wall, 0, 0, 80, 80, null);
-        }
-        else{
-            g.setColor(Color.WHITE);
-            g.fillRect(0, 0, getWidth(), getHeight());
-        }
-
-        if(isPartOfShortestPath){
-            g.setColor(Color.GREEN);
-            g.fillRect(0, 0, getWidth(), getHeight());
         }
     }
 
@@ -273,10 +283,8 @@ public class MazeCell extends JPanel {
     }
 
     public void setShortestPathLengthAndVisitedFrom(int shortestPathLength, int prevCellX, int prevCellY){
-        if(shortestPathLength < this.shortestPathLength){
-            this.shortestPathLength = shortestPathLength;
-            setVisitedFrom(prevCellX, prevCellY);
-        }
+        this.shortestPathLength = shortestPathLength;
+        setVisitedFrom(prevCellX, prevCellY);
     }
 
     public void setVisitedFrom(int x, int y){
