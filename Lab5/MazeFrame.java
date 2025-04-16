@@ -29,161 +29,141 @@ public class MazeFrame extends JFrame{
             }
         }
 
-        //Set the start and end cells by default
         resetToInitial();
         
         pack();
         setVisible(true);
-    }
-
-    private boolean isValidCell(int currentCellX, int currentCellY, int prevCellX, int prevCellY, int currentLengthOfPath){
-        if(currentCellX < 0 || currentCellX >= 5 || currentCellY < 0 || currentCellY >= 5){
-            return false;
-        }
-        else if(maze[currentCellX][currentCellY].isWall()){
-            return false;
-        }
-        else if(maze[currentCellX][currentCellY].getShortestPathLength() != Integer.MAX_VALUE){
-            return false;
-        }
-        else {
-            if(maze[currentCellX][currentCellY].getShortestPathLength() <= currentLengthOfPath){
-                return false;
-            }
-            else {
-                maze[currentCellX][currentCellY].setShortestPathLengthAndVisitedFrom(currentLengthOfPath, prevCellX, prevCellY);
-                return true;
-            }
-        }
-    }    
+    } 
 
     public void findShortestPath(){
-        // Completely reset path data
+        boolean foundStart = false;
+        boolean foundEnd = false;
+        
         for(int i = 0; i < 5; i++){
             for(int j = 0; j < 5; j++){
                 maze[i][j].setIsPartOfShortestPath(false);
-                maze[i][j].setShortestPathLengthAndVisitedFrom(Integer.MAX_VALUE, -1, -1);
+                maze[i][j].setShortestPathLengthAndVisitedFrom(Integer.MAX_VALUE, 0, 0);
+                
+                if(maze[i][j].isStart()){
+                    startCellCoords[0] = i;
+                    startCellCoords[1] = j;
+                    foundStart = true;
+                }
+                else if(maze[i][j].isEnd()){
+                    endCellCoords[0] = i;
+                    endCellCoords[1] = j;
+                    foundEnd = true;
+                }
+                
                 maze[i][j].repaint();
             }
         }
+        
+        if(!foundStart || !foundEnd){
+            JOptionPane.showMessageDialog(null, "Please set both start and end points before finding a path.");
+            return;
+        }
+        
+        lengthOfShortestPathPossible = Math.abs(endCellCoords[0] - startCellCoords[0]) + 
+                         Math.abs(endCellCoords[1] - startCellCoords[1]);
         
         isShortestPathFound = false;
         shortestPathNumberOfTries = 0;
         currentLengthOfPath = 0;
         currentCellX = startCellCoords[0];
         currentCellY = startCellCoords[1];
+    
+        maze[startCellCoords[0]][startCellCoords[1]].setShortestPathLengthAndVisitedFrom(0, startCellCoords[0], startCellCoords[1]);
         
-        // Set the start cell's path length to 0
-        maze[startCellCoords[0]][startCellCoords[1]].setShortestPathLengthAndVisitedFrom(0, -1, -1);
-        
-        // Use each strategy in sequence - this gives better coverage
-        System.out.println("Starting search with " + MAX_TRIES + " max tries");
         dfsSearch(startCellCoords[0], startCellCoords[1], 0);
         
-        // After all search attempts, paint the path (if found)
         paintTheShortestPath();
     }
     
-    // Improved recursive search that tries movements in different orders
     private boolean dfsSearch(int x, int y, int pathLength) {
-        // Too many tries or already found path, exit
         if(shortestPathNumberOfTries >= MAX_TRIES || isShortestPathFound) {
             return true;
         }
         
-        // Check if we reached the end
         if(x == endCellCoords[0] && y == endCellCoords[1]) {
-            System.out.println("Found end! Path length: " + pathLength);
             isShortestPathFound = true;
             return true;
         }
         
         shortestPathNumberOfTries++;
-        if(shortestPathNumberOfTries % 1000 == 0) {
-            System.out.println("Tries: " + shortestPathNumberOfTries);
-        }
-        
-        // Instead of fixed direction order, determine direction based on where the end is
+    
         int xDiff = endCellCoords[0] - x;
         int yDiff = endCellCoords[1] - y;
         
-        // Create an array of directions to try in priority order
         int[][] directions = new int[4][2];
         
-        // Prioritize directions leading toward the end point
         if(Math.abs(xDiff) > Math.abs(yDiff)) {
-            // End is more horizontal than vertical distance
             if(xDiff > 0) {
-                // End is to the right
-                directions[0] = new int[]{1, 0};  // right
+                directions[0] = new int[]{1, 0}; 
                 if(yDiff > 0) {
-                    directions[1] = new int[]{0, 1};  // down
-                    directions[2] = new int[]{0, -1}; // up
-                } else {
-                    directions[1] = new int[]{0, -1}; // up
-                    directions[2] = new int[]{0, 1};  // down
+                    directions[1] = new int[]{0, 1};  
+                    directions[2] = new int[]{0, -1}; 
+                } 
+                else {
+                    directions[1] = new int[]{0, -1}; 
+                    directions[2] = new int[]{0, 1};  
                 }
-                directions[3] = new int[]{-1, 0}; // left
-            } else {
-                // End is to the left
-                directions[0] = new int[]{-1, 0}; // left
+                directions[3] = new int[]{-1, 0}; 
+            } 
+            else {
+                directions[0] = new int[]{-1, 0}; 
                 if(yDiff > 0) {
-                    directions[1] = new int[]{0, 1};  // down
-                    directions[2] = new int[]{0, -1}; // up
-                } else {
-                    directions[1] = new int[]{0, -1}; // up
-                    directions[2] = new int[]{0, 1};  // down
+                    directions[1] = new int[]{0, 1};  
+                    directions[2] = new int[]{0, -1}; 
+                } 
+                else {
+                    directions[1] = new int[]{0, -1}; 
+                    directions[2] = new int[]{0, 1};  
                 }
-                directions[3] = new int[]{1, 0};  // right
+                directions[3] = new int[]{1, 0};  
             }
-        } else {
-            // End is more vertical than horizontal distance
+        } 
+        else {
             if(yDiff > 0) {
-                // End is below
-                directions[0] = new int[]{0, 1};  // down
+                directions[0] = new int[]{0, 1};  
                 if(xDiff > 0) {
-                    directions[1] = new int[]{1, 0};  // right
-                    directions[2] = new int[]{-1, 0}; // left
-                } else {
-                    directions[1] = new int[]{-1, 0}; // left
-                    directions[2] = new int[]{1, 0};  // right
+                    directions[1] = new int[]{1, 0};  
+                    directions[2] = new int[]{-1, 0}; 
+                } 
+                else {
+                    directions[1] = new int[]{-1, 0}; 
+                    directions[2] = new int[]{1, 0};  
                 }
-                directions[3] = new int[]{0, -1}; // up
-            } else {
-                // End is above
-                directions[0] = new int[]{0, -1}; // up
+                directions[3] = new int[]{0, -1}; 
+            } 
+            else {
+                directions[0] = new int[]{0, -1}; 
                 if(xDiff > 0) {
-                    directions[1] = new int[]{1, 0};  // right
-                    directions[2] = new int[]{-1, 0}; // left
-                } else {
-                    directions[1] = new int[]{-1, 0}; // left
-                    directions[2] = new int[]{1, 0};  // right
+                    directions[1] = new int[]{1, 0};  
+                    directions[2] = new int[]{-1, 0}; 
+                } 
+                else {
+                    directions[1] = new int[]{-1, 0}; 
+                    directions[2] = new int[]{1, 0};  
                 }
-                directions[3] = new int[]{0, 1};  // down
+                directions[3] = new int[]{0, 1};  
             }
         }
         
-        // Try each direction according to priority
         for(int[] dir : directions) {
             int newX = x + dir[0];
             int newY = y + dir[1];
             
-            // Check if valid move
-            if(newX >= 0 && newX < 5 && newY >= 0 && newY < 5 && 
-               !maze[newX][newY].isWall() && 
-               maze[newX][newY].getShortestPathLength() > pathLength + 1) {
+            if(newX >= 0 && newX < 5 && newY >= 0 && newY < 5 && !maze[newX][newY].isWall() && maze[newX][newY].getShortestPathLength() > pathLength + 1) {
                 
-                // Mark this cell
                 maze[newX][newY].setShortestPathLengthAndVisitedFrom(pathLength + 1, x, y);
                 
-                // Recursive call
                 if(dfsSearch(newX, newY, pathLength + 1)) {
                     return true;
                 }
             }
         }
-        
-        // If we get here, this path didn't work - backtrack
+
         return false;
     }
 
@@ -193,14 +173,22 @@ public class MazeFrame extends JFrame{
         resetEnd();
         resetToNewPath();
         resetShortestPathLengths();
-        resetToInitial();
+        
+        maze[0][0].setCell(true, false, false);
+        maze[4][4].setCell(false, true, false);
+        startCellCoords[0] = 0;
+        startCellCoords[1] = 0;
+        endCellCoords[0] = 4;
+        endCellCoords[1] = 4;
+        lengthOfShortestPathPossible = Math.abs(endCellCoords[0] - startCellCoords[0]) + 
+                         Math.abs(endCellCoords[1] - startCellCoords[1]);
     }
 
     public void resetToNewPath(){
         for(int i = 0; i < 5; i++){
             for(int j = 0; j < 5; j++){
                 maze[i][j].setIsPartOfShortestPath(false);
-                maze[i][j].setShortestPathLengthAndVisitedFrom(Integer.MAX_VALUE, -1, -1);
+                maze[i][j].setShortestPathLengthAndVisitedFrom(Integer.MAX_VALUE, 0, 0);
                 maze[i][j].repaint();
             }
         }
@@ -306,7 +294,7 @@ public class MazeFrame extends JFrame{
     public void resetShortestPathLengths(){
         for(int i = 0; i < 5; i++){
             for(int j = 0; j < 5; j++){
-                maze[i][j].setShortestPathLengthAndVisitedFrom(Integer.MAX_VALUE, -1, -1);
+                maze[i][j].setShortestPathLengthAndVisitedFrom(Integer.MAX_VALUE, 0, 0);
                 maze[i][j].repaint();
             }
         }
@@ -320,7 +308,7 @@ public class MazeFrame extends JFrame{
         endCellCoords[0] = 4;
         endCellCoords[1] = 4;
         lengthOfShortestPathPossible = Math.abs(endCellCoords[0] - startCellCoords[0]) + 
-                             Math.abs(endCellCoords[1] - startCellCoords[1]);
+                         Math.abs(endCellCoords[1] - startCellCoords[1]);
         isShortestPathFound = false;
         shortestPathNumberOfTries = 0;
         currentLengthOfPath = 0;

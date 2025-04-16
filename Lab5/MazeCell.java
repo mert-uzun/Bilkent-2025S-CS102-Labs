@@ -21,8 +21,8 @@ public class MazeCell extends JPanel {
                         ButtonsFrame.CurrentMaze.resetStart();
                         ButtonsFrame.CurrentMaze.resetToNewPath();
                         setCell(true, false, false);
-                        ButtonsFrame.CurrentMaze.startCellCoords[0] = j;
-                        ButtonsFrame.CurrentMaze.startCellCoords[1] = i;
+                        ButtonsFrame.CurrentMaze.startCellCoords[0] = i;
+                        ButtonsFrame.CurrentMaze.startCellCoords[1] = j;
                         ButtonsFrame.CurrentMaze.lengthOfShortestPathPossible = Math.abs(ButtonsFrame.CurrentMaze.endCellCoords[0] - ButtonsFrame.CurrentMaze.startCellCoords[0]) + Math.abs(ButtonsFrame.CurrentMaze.endCellCoords[1] - ButtonsFrame.CurrentMaze.startCellCoords[1]);
                         ButtonsFrame.CurrentMaze.disableSetStart();
                     }
@@ -52,8 +52,8 @@ public class MazeCell extends JPanel {
                         ButtonsFrame.CurrentMaze.resetEnd();
                         ButtonsFrame.CurrentMaze.resetToNewPath();
                         setCell(false, true, false);
-                        ButtonsFrame.CurrentMaze.endCellCoords[0] = j;
-                        ButtonsFrame.CurrentMaze.endCellCoords[1] = i;
+                        ButtonsFrame.CurrentMaze.endCellCoords[0] = i;
+                        ButtonsFrame.CurrentMaze.endCellCoords[1] = j;
                         ButtonsFrame.CurrentMaze.lengthOfShortestPathPossible = Math.abs(ButtonsFrame.CurrentMaze.endCellCoords[0] - ButtonsFrame.CurrentMaze.startCellCoords[0]) + Math.abs(ButtonsFrame.CurrentMaze.endCellCoords[1] - ButtonsFrame.CurrentMaze.startCellCoords[1]);
                         ButtonsFrame.CurrentMaze.disableSetEnd();
                     }
@@ -152,8 +152,8 @@ public class MazeCell extends JPanel {
         }
 
         visitedFrom = new int[2];
-        visitedFrom[0] = -1;
-        visitedFrom[1] = -1;
+        visitedFrom[0] = 0;
+        visitedFrom[1] = 0;
         isPartOfShortestPath = false;
         shortestPathLength = Integer.MAX_VALUE;
 
