@@ -15,9 +15,10 @@ public class BankSimulation {
 
     public BankSimulation(){
         users = new User[USERS_ARRAY_LENGTH];
-        usersUnsorted = new User[USERS_ARRAY_LENGTH];
-        usersSorted = new User[USERS_ARRAY_LENGTH];
         totalNumberOfUsers = 0;
+        usersUnsorted = new User[totalNumberOfUsers];
+        usersSorted = new User[totalNumberOfUsers];
+        
     }
 
     public void startSimulation(){
@@ -135,7 +136,26 @@ public class BankSimulation {
 
         switch(sortingChoice){
             case 1:
-                usersUnsorted = Arrays.copyOf(usersUnsorted, USERS_ARRAY_LENGTH);
+                double startTime = System.currentTimeMillis();
+                usersUnsorted = Arrays.copyOf(users, totalNumberOfUsers);
+                usersSorted = sortAccordingToID(sortLimit, usersUnsorted);
+                users = Arrays.copyOf(usersSorted, totalNumberOfUsers);
+                double endTime = System.currentTimeMillis();
+                double duration = (endTime - startTime) / 1000;
+                System.out.println("Time taken: " + duration + " milliseconds");
+                break;
+            case 2:
+                startTime = System.currentTimeMillis();
+                usersUnsorted = Arrays.copyOf(users, totalNumberOfUsers);
+                usersSorted = sortAccordingToTotalBalance(sortLimit, usersUnsorted);
+                users = Arrays.copyOf(usersSorted, totalNumberOfUsers);
+                endTime = System.currentTimeMillis();
+                duration = (endTime - startTime) / 1000;
+                System.out.println("Time taken: " + duration + " milliseconds");
+                break;
+            default:
+                System.out.println("Invalid option!");
+                break;
         }
     }
 
@@ -143,12 +163,60 @@ public class BankSimulation {
         if (partitionOfUsers.length <= limit) {
             return insertionSortBasedOnID(partitionOfUsers);
         }
+
+        int pivotIndex = partitionOfUsers.length / 2;
+        User pivot = partitionOfUsers[pivotIndex];
+
+        ArrayList<User> lessThanPivot = new ArrayList<>();
+        ArrayList<User> equalPivot = new ArrayList<>();
+        ArrayList<User> greaterThanPivot = new ArrayList<>();
+
+        for(int i = 0; i < partitionOfUsers.length; i++){
+            if(partitionOfUsers[i].compareTo(pivot) < 0){
+                lessThanPivot.add(partitionOfUsers[i]);
+            }
+            else if (partitionOfUsers[i].compareTo(pivot) > 0){
+                greaterThanPivot.add(partitionOfUsers[i]);
+            }
+            else{
+                equalPivot.add(partitionOfUsers[i]);
+            }
+        }
+
+        User[] sortedLessThanPivot = sortAccordingToID(limit, ArrayListToArray(lessThanPivot));
+        User[] sortedGreaterThanPivot = sortAccordingToID(limit, ArrayListToArray(greaterThanPivot));
+
+        return concatenateArrays(sortedLessThanPivot, equalPivot, sortedGreaterThanPivot);
     }
 
     public User[] sortAccordingToTotalBalance(int limit, User[] partitionOfUsers){
-        if (usersUnsorted.length <= limit) {
-            return insertionSortBasedOnTotalBalance(usersUnsorted);
+        if (partitionOfUsers.length <= limit) {
+            return insertionSortBasedOnTotalBalance(partitionOfUsers);
         }
+
+        int pivotIndex = partitionOfUsers.length / 2;
+        User pivot = partitionOfUsers[pivotIndex];
+
+        ArrayList<User> lessThanPivot = new ArrayList<>();
+        ArrayList<User> equalPivot = new ArrayList<>();
+        ArrayList<User> greaterThanPivot = new ArrayList<>();
+
+        for(int i = 0; i < partitionOfUsers.length; i++){
+            if(partitionOfUsers[i].getTotalBalanceInCommonCurrency() < pivot.getTotalBalanceInCommonCurrency()){
+                lessThanPivot.add(partitionOfUsers[i]);
+            }
+            else if (partitionOfUsers[i].getTotalBalanceInCommonCurrency() > pivot.getTotalBalanceInCommonCurrency()){
+                greaterThanPivot.add(partitionOfUsers[i]);
+            }
+            else{
+                equalPivot.add(partitionOfUsers[i]);
+            }
+        }
+
+        User[] sortedLessThanPivot = sortAccordingToTotalBalance(limit, ArrayListToArray(lessThanPivot));
+        User[] sortedGreaterThanPivot = sortAccordingToTotalBalance(limit, ArrayListToArray(greaterThanPivot));
+
+        return concatenateArrays(sortedLessThanPivot, equalPivot, sortedGreaterThanPivot);
     }
 
     public User[] insertionSortBasedOnID(User[] partitionOfArray){
@@ -161,6 +229,9 @@ public class BankSimulation {
                     partitionOfArray[j] = elementToInsert;
                     partitionOfArray[j + 1] = temp;
                 }
+                else{
+                    break;
+                }
             }
         }
 
@@ -172,14 +243,49 @@ public class BankSimulation {
             User elementToInsert = partitionOfArray[i];
 
             for (int j = i - 1; j >= 0; j--) {
-                if (partitionOfArray[j].getTotalBalanceInCommonCurrency() < elementToInsert.getTotalBalanceInCommonCurrency()) {
+                if (elementToInsert.getTotalBalanceInCommonCurrency() < partitionOfArray[j].getTotalBalanceInCommonCurrency()) {
                     User temp = partitionOfArray[j];
                     partitionOfArray[j] = elementToInsert;
                     partitionOfArray[j + 1] = temp;
+                }
+                else{
+                    break;
                 }
             }
         }
 
         return partitionOfArray;
+    }
+
+    public void resetToUnsortedArray(){
+        users = Arrays.copyOf(usersUnsorted, totalNumberOfUsers);
+    }
+
+    private User[] ArrayListToArray(ArrayList<User> arrayList){
+        User[] array = new User[arrayList.size()];
+
+        for(int i = 0; i < arrayList.size(); i++){
+            array[i] = arrayList.get(i);
+        }
+
+        return array;
+    }
+
+    private User[] concatenateArrays(User[] array1, ArrayList<User> array2, User[] array3){
+        User[] concatenatedArray = new User[array1.length + array2.size() + array3.length];
+
+        for(int i = 0; i < array1.length; i++){
+            concatenatedArray[i] = array1[i];
+        }
+
+        for(int i = 0; i < array2.size(); i++){
+            concatenatedArray[array1.length + i] = array2.get(i);
+        }
+
+        for(int i = 0; i < array3.length; i++){
+            concatenatedArray[array1.length + array2.size() + i] = array3[i];
+        }   
+
+        return concatenatedArray;
     }
 }
