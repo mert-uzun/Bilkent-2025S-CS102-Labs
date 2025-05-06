@@ -82,13 +82,13 @@ public class BankSimulation {
         System.out.println("Generating " + numberOfUsersToGenerate + " random users...");
 
         for(int i = 0; i < numberOfUsersToGenerate; i++){
-            usersUnsorted[totalNumberOfUsers++] = new User();
+            users[totalNumberOfUsers++] = new User();
         }
     }
 
     private void listUsers(){
         for(int i = 0; i < totalNumberOfUsers; i++){
-            System.out.println(usersUnsorted[i]);
+            System.out.println(users[i]);
         }
     }
 
@@ -102,10 +102,10 @@ public class BankSimulation {
         }
 
         for(int i = 0; i < totalNumberOfUsers; i++){
-            if(usersUnsorted[i].getID().equals(id)){
-                System.out.println("\n" + usersUnsorted[i]);
+            if(users[i].getID().equals(id)){
+                System.out.println("\n" + users[i]);
                 System.out.println("Accounts: ");
-                usersUnsorted[i].printAccounts();
+                users[i].printAccounts();
                 return;
             }
         }
@@ -114,11 +114,7 @@ public class BankSimulation {
     }
 
     public void setConversionRates(){
-        for(int i = 0; i < Account.getTYPES().length; i++){
-            System.out.print("Set " + Account.getTYPES()[i] + ": ");
-            Account.getRates()[i] = scanner.nextDouble();
-            scanner.nextLine();
-        }        
+        Account.changeRates();
     }
 
     public void sortUsers(){
@@ -287,5 +283,9 @@ public class BankSimulation {
         }   
 
         return concatenatedArray;
+    }
+
+    private void fillTheRestOfUsersArray(){
+        this.users = Arrays.copyOf(usersUnsorted, USERS_ARRAY_LENGTH);
     }
 }
