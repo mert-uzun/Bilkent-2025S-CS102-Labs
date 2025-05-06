@@ -135,7 +135,7 @@ public class BankSimulation {
                 double startTime = System.currentTimeMillis();
                 usersUnsorted = Arrays.copyOf(users, totalNumberOfUsers);
                 usersSorted = sortAccordingToID(sortLimit, usersUnsorted);
-                users = Arrays.copyOf(usersSorted, totalNumberOfUsers);
+                users = Arrays.copyOf(usersSorted, USERS_ARRAY_LENGTH);
                 double endTime = System.currentTimeMillis();
                 double duration = (endTime - startTime) / 1000;
                 System.out.println("Time taken: " + duration + " milliseconds");
@@ -144,7 +144,7 @@ public class BankSimulation {
                 startTime = System.currentTimeMillis();
                 usersUnsorted = Arrays.copyOf(users, totalNumberOfUsers);
                 usersSorted = sortAccordingToTotalBalance(sortLimit, usersUnsorted);
-                users = Arrays.copyOf(usersSorted, totalNumberOfUsers);
+                users = Arrays.copyOf(usersSorted, USERS_ARRAY_LENGTH);
                 endTime = System.currentTimeMillis();
                 duration = (endTime - startTime) / 1000;
                 System.out.println("Time taken: " + duration + " milliseconds");
@@ -283,9 +283,5 @@ public class BankSimulation {
         }   
 
         return concatenatedArray;
-    }
-
-    private void fillTheRestOfUsersArray(){
-        this.users = Arrays.copyOf(usersUnsorted, USERS_ARRAY_LENGTH);
     }
 }
