@@ -45,6 +45,12 @@ public class User implements Comparable<User>{
         }
     }
 
+    public void updateRateToCommonCurrency(){
+        for(Account account : accounts){
+            account.setRateToCommonCurrency(Account.getRates()[Arrays.asList(Account.getTYPES()).indexOf(account.getType())]);
+        }
+    }
+
     @Override
     public String toString(){
         return "" + id + 

@@ -114,7 +114,15 @@ public class BankSimulation {
     }
 
     public void setConversionRates(){
-        Account.changeRates();
+        for(int i = 0; i < Account.getTYPES().length; i++){
+            System.out.print("Set " + Account.getTYPES()[i] + ": ");
+            Account.getRates()[i] = scanner.nextDouble();
+            scanner.nextLine();
+        }
+
+        for(int i = 0; i < totalNumberOfUsers; i++){
+            users[i].updateRateToCommonCurrency();
+        }
     }
 
     public void sortUsers(){

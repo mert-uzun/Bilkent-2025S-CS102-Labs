@@ -32,7 +32,7 @@ public class Account {
             System.out.print("Set " + Account.getTYPES()[i] + ": ");
             Account.getRates()[i] = scanner.nextDouble();
             scanner.nextLine();
-        }    
+        }
     }
 
     public static void printRates(){
@@ -71,5 +71,9 @@ public class Account {
 
     public static double[] getRates(){
         return rates;
+    }
+
+    public void setRateToCommonCurrency(double rateToCommonCurrency){
+        this.rateToCommonCurrency = rateToCommonCurrency;
     }
 }
