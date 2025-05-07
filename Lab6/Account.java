@@ -4,17 +4,17 @@ import java.util.*;
 
 public class Account {
     private static final String[] TYPES = {"A", "B", "C", "D"};
-    private static double[] rates = new double[TYPES.length];
     private static final double RATE_BELOW_LIMIT = 0.2;
-    private static final double RATE_ABOVE_LIMIT = 5;
-
+    private static final double RATE_ABOVE_LIMIT = 5;    
     private static final Random RANDOM = new Random();
     private static final Scanner scanner = new Scanner(System.in);
+
+    private static double[] rates = new double[TYPES.length];
 
     private String type;
     private double balance;
     private double rateToCommonCurrency;
-    
+
     public Account(int index){
         this.type = TYPES[index];
         this.balance = RANDOM.nextDouble(100, 10000);

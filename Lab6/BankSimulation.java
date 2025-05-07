@@ -65,7 +65,7 @@ public class BankSimulation {
                     break;
                 case 0:
                     programContinues = false;
-                    System.out.println("\nBye!");
+                    System.out.println("Bye!");
                     break;
                 default:
                     System.out.println("Invalid option!");
@@ -93,24 +93,29 @@ public class BankSimulation {
     }
 
     private void showUserWithID(){
-        System.out.print("Enter User ID: ");
-        String id = scanner.nextLine();
+        try{
+            System.out.print("Enter User ID: ");
+            String id = scanner.nextLine();
 
-        if (id.length() != 9) {
-            System.out.println("Cannot find the user!");
-            return;
-        }
-
-        for(int i = 0; i < totalNumberOfUsers; i++){
-            if(users[i].getID().equals(id)){
-                System.out.println("\n" + users[i]);
-                System.out.println("Accounts: ");
-                users[i].printAccounts();
-                return;
+            if (id.length() != 9) {
+                System.out.println("Cannot find the user!");
+                throw new NoSuchElementException("User with given ID does not exist!");
             }
-        }
 
-        System.out.println("Cannot find the user!");
+            for(int i = 0; i < totalNumberOfUsers; i++){
+                if(users[i].getID().equals(id)){
+                    System.out.println("\n" + users[i]);
+                    System.out.println("Accounts: ");
+                    users[i].printAccounts();
+                    return;
+                }
+            }
+
+            throw new NoSuchElementException("User with given ID does not exist!");
+        }
+        catch(NoSuchElementException e){
+            System.out.println(e.getMessage());
+        }   
     }
 
     public void setConversionRates(){
@@ -120,8 +125,14 @@ public class BankSimulation {
             scanner.nextLine();
         }
 
+        System.out.println(Arrays.toString(Account.getRates()));
+
         for(int i = 0; i < totalNumberOfUsers; i++){
-            users[i].updateRateToCommonCurrency();
+            for(Account account : users[i].getAccounts()){
+                account.setRateToCommonCurrency(Account.getRates()[Arrays.asList(Account.getTYPES()).indexOf(account.getType())]);
+            }
+
+            users[i].resetTotalBalanceForRateChange();
         }
     }
 
