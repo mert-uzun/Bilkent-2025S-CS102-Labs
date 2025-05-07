@@ -273,7 +273,7 @@ public class BankSimulation {
     }
 
     public void resetToUnsortedArray(){
-        users = Arrays.copyOf(usersUnsorted, totalNumberOfUsers);
+        users = Arrays.copyOf(usersUnsorted, USERS_ARRAY_LENGTH);
     }
 
     private User[] ArrayListToArray(ArrayList<User> arrayList){
